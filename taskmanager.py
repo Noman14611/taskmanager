@@ -1,3 +1,12 @@
+import pandas as pd  # Excel export ke liye
+
+# ✅ Export function
+def export_tasks_to_excel(tasks, selected_date):
+    df = pd.DataFrame(tasks)
+    filename = f"Tasks_{selected_date}.xlsx"
+    df.to_excel(filename, index=False)
+    return filename
+
 import streamlit as st
 import json
 import os
