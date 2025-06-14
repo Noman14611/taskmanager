@@ -31,7 +31,16 @@ selected_date = st.sidebar.date_input("Choose a date", value=date.today())
 selected_date_str = selected_date.strftime("%Y-%m-%d")
 
 # Load tasks for selected date
-tasks = load_tasks(selected_date_str)
+def load_tasks(selected_date):
+    filepath = get_task_file(selected_date)
+    if os.path.exists(filepath):
+        with open(filepath, "r") as file:
+            data = json.load(file)
+            # Convert old format (list of strings) to new format (list of dicts)
+            if data and isinstance(data[0], str):
+                return [{"task": task, "status": "Pending"} for task in data]
+            return data
+    return []
 
 # Input new task
 st.subheader(f"Tasks for {selected_date_str}")
