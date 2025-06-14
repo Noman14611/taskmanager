@@ -43,7 +43,7 @@ if st.button("➕ Add Task"):
         tasks.append(new_task)
         save_tasks(selected_date_str, tasks)
         st.success("Task added!")
-        st.experimental_rerun()
+        st.rerun()
     else:
         st.warning("Please enter a task.")
 
