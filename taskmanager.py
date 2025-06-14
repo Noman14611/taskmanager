@@ -33,13 +33,16 @@ selected_date_str = selected_date.strftime("%Y-%m-%d")
 # Load tasks for selected date
 def load_tasks(selected_date):
     filepath = get_task_file(selected_date)
-    if os.path.exists(filepath):
-        with open(filepath, "r") as file:
-            data = json.load(file)
-            # Convert old format (list of strings) to new format (list of dicts)
-            if data and isinstance(data[0], str):
-                return [{"task": task, "status": "Pending"} for task in data]
-            return data
+    try:
+        if os.path.exists(filepath):
+            with open(filepath, "r") as file:
+                data = json.load(file)
+                # Convert old format (list of strings) to new format (list of dicts)
+                if data and isinstance(data[0], str):
+                    return [{"task": task, "status": "Pending"} for task in data]
+                return data
+    except Exception as e:
+        st.warning("⚠️ Error loading tasks, resetting to empty.")
     return []
 
 # Input new task
