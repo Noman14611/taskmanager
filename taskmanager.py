@@ -3,6 +3,15 @@ import json
 import os
 from datetime import date
 
+import pandas as pd  # Excel export ke liye
+
+# ✅ Export function
+def export_tasks_to_excel(tasks, selected_date):
+    df = pd.DataFrame(tasks)
+    filename = f"Tasks_{selected_date}.xlsx"
+    df.to_excel(filename, index=False)
+    return filename
+
 # 📁 Create tasks directory if not exists
 if not os.path.exists("tasks"):
     os.makedirs("tasks")
@@ -103,6 +112,18 @@ if tasks:
     st.write("### ✅ Your Tasks:")
     for i, item in enumerate(tasks):
         col1, col2, col3 = st.columns([0.6, 0.3, 0.1])
+
+            # 📥 Export to Excel Button
+    with st.expander("📤 Export Options"):
+        if st.button("⬇️ Export to Excel"):
+            excel_file = export_tasks_to_excel(tasks, selected_date_str)
+            with open(excel_file, "rb") as f:
+                st.download_button(
+                    label="Download Excel File",
+                    data=f,
+                    file_name=excel_file,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
 
         with col1:
             st.write(f"📝 {item['task']}")
