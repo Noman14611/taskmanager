@@ -3,7 +3,7 @@ import json
 import os
 from datetime import date
 
-# Create directory to store tasks if not exists
+# Create tasks directory if not exists
 if not os.path.exists("tasks"):
     os.makedirs("tasks")
 
@@ -22,7 +22,6 @@ def save_tasks(selected_date, tasks):
     with open(filepath, "w") as file:
         json.dump(tasks, file)
 
-# Streamlit app
 st.set_page_config(page_title="Task Manager", layout="wide")
 st.title("📋 Daily Task Manager")
 
@@ -40,28 +39,39 @@ new_task = st.text_input("Add a new task", placeholder="e.g., Complete report")
 
 if st.button("➕ Add Task"):
     if new_task:
-        tasks.append(new_task)
+        tasks.append({"task": new_task, "status": "Pending"})
         save_tasks(selected_date_str, tasks)
         st.success("Task added!")
         st.rerun()
     else:
         st.warning("Please enter a task.")
 
-# Display task list
+# Display task list with status dropdowns
 if tasks:
     st.write("### ✅ Your Tasks:")
-    for i, task in enumerate(tasks):
-        col1, col2 = st.columns([0.9, 0.1])
+    for i, item in enumerate(tasks):
+        col1, col2, col3 = st.columns([0.6, 0.3, 0.1])
         with col1:
-            st.write(f"📝 {task}")
+            st.write(f"📝 {item['task']}")
         with col2:
+            new_status = st.selectbox(
+                "Status",
+                ["Pending", "Completed"],
+                index=0 if item["status"] == "Pending" else 1,
+                key=f"status_{i}"
+            )
+            if new_status != item["status"]:
+                tasks[i]["status"] = new_status
+                save_tasks(selected_date_str, tasks)
+                st.rerun()
+        with col3:
             if st.button("❌", key=f"delete_{i}"):
                 tasks.pop(i)
                 save_tasks(selected_date_str, tasks)
-                st.experimental_rerun()
+                st.rerun()
 else:
     st.info("No tasks for this day yet.")
 
 # Footer
 st.markdown("---")
-st.caption("🛠️ Built with Streamlit | Task saved in local JSON files.")
+st.caption("🛠️ Built with Streamlit | Tasks saved in JSON per date.")
