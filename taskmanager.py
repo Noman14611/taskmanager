@@ -42,6 +42,44 @@ st.sidebar.header("📅 Select Date")
 selected_date = st.sidebar.date_input("Choose a date", value=date.today())
 selected_date_str = selected_date.strftime("%Y-%m-%d")
 
+# 🌙 Dark Mode Toggle
+dark_mode = st.sidebar.toggle("🌙 Dark Mode", value=False)
+
+# 🖌️ Apply CSS for Dark or Light mode
+if dark_mode:
+    st.markdown("""
+        <style>
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+        }
+        .stApp {
+            background-color: #121212;
+            color: #FFFFFF;
+        }
+        div[data-testid="stSidebar"] {
+            background-color: #1f1f1f;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        body {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .stApp {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        div[data-testid="stSidebar"] {
+            background-color: #F0F2F6;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+
 # 📥 Load today's tasks
 tasks = load_tasks(selected_date_str)
 if not isinstance(tasks, list):
